@@ -15,8 +15,8 @@ def _valeur_obligatoire(nom_variable: str) -> str:
 
 
 
-GROQ_API_KEY = _valeur_obligatoire("GROQ_API_KEY")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")  
+OPENROUTER_API_KEY = _valeur_obligatoire("OPENROUTER_API_KEY")
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")  
 
 
 DB_HOST = os.getenv("DB_HOST", "localhost")
@@ -32,11 +32,11 @@ TABLE_ARTICLES = os.getenv("TABLE_ARTICLES", "economic_watch_article")
 if __name__ == "__main__":
   
     print("Configuration chargée avec succès :")
-    print(f"  GROQ_MODEL = {GROQ_MODEL}")
+    print(f"  OPENROUTER_MODEL = {OPENROUTER_MODEL}")
     print(f"  DB_HOST    = {DB_HOST}")
     print(f"  DB_PORT    = {DB_PORT}")
     print(f"  DB_NAME    = {DB_NAME}")
     print(f"  DB_USER    = {DB_USER}")
     print(f"  TABLE_ARTICLES = {TABLE_ARTICLES}")
-    print(f"  GROQ_API_KEY présente : {'oui' if GROQ_API_KEY else 'non'}")
+    print(f"  OPENROUTER_API_KEY présente : {'oui' if OPENROUTER_API_KEY else 'non'}")
     print(f"  DB_PASSWORD présent   : {'oui' if DB_PASSWORD else 'non'}")

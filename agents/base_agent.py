@@ -7,10 +7,10 @@ class BaseAgent:
 
     def __init__(self, model: str = None):
         self.client = OpenAI(
-            base_url="https://api.groq.com/openai/v1",
-            api_key=config.GROQ_API_KEY,
+            base_url="https://openrouter.ai/api/v1",
+            api_key=config.OPENROUTER_API_KEY,
         )
-        self.model = model or config.GROQ_MODEL
+        self.model = model or config.OPENROUTER_MODEL
 
     def call_model(self, prompt: str, tentatives_max: int = 3) -> dict:
         derniere_erreur = None
