@@ -1,14 +1,3 @@
-"""
-agents/risk_agent.py
-=====================
-Agent spécialisé : détecte les risques (cyber, réglementaires,
-financiers, réputationnels...) dans le texte d'un article.
-
-N'a AUCUNE connaissance de la base de données, du téléchargement
-d'articles, ni des autres agents. Il reçoit juste un texte et
-retourne un résultat structuré.
-"""
-
 from agents.base_agent import BaseAgent
 
 

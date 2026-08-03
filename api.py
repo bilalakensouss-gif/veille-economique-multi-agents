@@ -1,6 +1,5 @@
 """
-api.py
-======
+
 API simple exposant un seul endpoint : POST /cycle/start
 
 Ce endpoint est SYNCHRONE : il démarre le cycle, attend qu'il se
@@ -10,8 +9,7 @@ résultat.
 
 Pour lancer ce serveur :
     uvicorn api:app --reload
-
-Puis tester avec par exemple :
+Puis tester en local::
     curl -X POST http://localhost:8000/cycle/start
 ou directement depuis un navigateur/Postman.:  http://localhost:8000/docs
 """
@@ -24,13 +22,7 @@ app = FastAPI(title="API Veille Économique Multi-Agents")
 
 @app.post("/cycle/start")
 def demarrer_cycle(limite: int = 50):
-    """
-    Lance un cycle complet et retourne le bilan JSON dès qu'il est terminé.
-
-    Reprend automatiquement depuis le dernier cycle enregistré
-    (même logique que "python main.py"), sauf si tu ajoutes
-    ?limite=10 dans l'URL pour limiter le nombre d'articles.
-    """
+  
     depuis_date, ids_a_reessayer = lire_etat()
 
     bilan = executer_cycle(

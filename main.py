@@ -1,13 +1,4 @@
-"""
-main.py
-=======
-Point d'entrée du système multi-agents de veille économique.
 
-Lance un cycle complet via MASOrchestrator sur des articles RÉELS de
-la base de données, et sauvegarde le document JSON final (statistiques,
-résultats, alertes, erreurs). Aucun résultat n'est écrit dans la base
-pour le moment, conformément au cahier des charges.
-"""
 
 import json
 import argparse
@@ -19,11 +10,7 @@ FICHIER_ETAT = "derniere_date_traitee.txt"
 
 
 def lire_etat():
-    """
-    Lit l'état du dernier cycle : la date created_at la plus récente
-    traitée, et les IDs d'articles ayant échoué (à réessayer).
-    Retourne (None, []) si le fichier n'existe pas encore.
-    """
+   
     if not os.path.exists(FICHIER_ETAT):
         return None, []
 
@@ -33,7 +20,7 @@ def lire_etat():
     if not contenu:
         return None, []
 
-    # Compatibilité : ancien format = juste une date en texte brut
+
     try:
         etat = json.loads(contenu)
         return etat.get("derniere_date"), etat.get("articles_en_echec", [])
@@ -63,7 +50,7 @@ def executer_cycle(depuis_date=None, limite: int = 50, ids_a_reessayer=None):
         depuis_date=depuis_date, limite=limite, ids_a_reessayer=ids_a_reessayer
     )
 
-    # On avance le curseur de date uniquement si des articles ont été trouvés
+   
     nouvelle_date = bilan["derniere_date_created_at"] or (
         depuis_date.isoformat() if isinstance(depuis_date, datetime) else depuis_date
     )
@@ -73,7 +60,7 @@ def executer_cycle(depuis_date=None, limite: int = 50, ids_a_reessayer=None):
 
 
 def sauvegarder_bilan(bilan: dict, chemin: str = None) -> str:
-    """Sauvegarde le bilan du cycle dans un fichier JSON local, horodaté."""
+  
     if chemin is None:
         horodatage = datetime.now().strftime("%Y%m%d_%H%M%S")
         chemin = f"resultat_cycle_{horodatage}.json"
@@ -114,10 +101,7 @@ def afficher_resume(bilan: dict):
 
 
 if __name__ == "__main__":
-    # Usage réel :
-    #   python main.py                         -> traite les 50 derniers articles
-    #   python main.py --limite 20              -> traite les 20 derniers articles
-    #   python main.py --depuis 2026-07-01      -> traite les articles créés après cette date
+   
     parser = argparse.ArgumentParser(description="Lance un cycle de veille économique multi-agents.")
     parser.add_argument("--limite", type=int, default=50, help="Nombre maximum d'articles à traiter")
     parser.add_argument("--depuis", type=str, default=None,
@@ -128,7 +112,7 @@ if __name__ == "__main__":
                               "de date (utile pour un premier lancement ou un test).")
     args = parser.parse_args()
 
-    # Détermine la date de départ et les articles à réessayer
+  
     if args.ignorer_historique:
         depuis_date, ids_a_reessayer = None, []
     elif args.depuis:

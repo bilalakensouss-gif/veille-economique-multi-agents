@@ -1,23 +1,10 @@
-"""
-agents/market_agent.py
-========================
-Agent spécialisé : identifie les tendances de marché (technologiques,
-économiques, sectorielles) dans le texte d'un article.
-
-Même principe que RiskAgent : reçoit un texte, retourne du JSON structuré,
-ne connaît ni la base de données, ni les autres agents.
-"""
-
 from agents.base_agent import BaseAgent
 
 
 class MarketAgent(BaseAgent):
 
     def analyser(self, texte_article: str, titre: str = "") -> dict:
-        """
-        Analyse un article et détermine s'il révèle une tendance de marché
-        pertinente, avec un score de confiance et une analyse structurée.
-        """
+        
         prompt = f"""
         Tu es un analyste de tendances de marché et économiques.
 

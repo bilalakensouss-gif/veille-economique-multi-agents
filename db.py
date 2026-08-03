@@ -1,12 +1,4 @@
-"""
-db.py
-=====
-Connexion à PostgreSQL et lecture des articles à traiter
-depuis la table configurée (economic_watch_article par défaut).
 
-Sélection basée uniquement sur created_at : on récupère les articles
-créés après la dernière date de traitement connue (depuis_date).
-"""
 
 import psycopg2
 import config
@@ -58,10 +50,7 @@ def get_articles_a_traiter(depuis_date=None, limite: int = 50) -> list:
 
 
 def get_articles_par_ids(ids: list) -> list:
-    """
-    Récupère des articles précis par leurs IDs (utilisé pour réessayer
-    les articles en échec lors d'un cycle précédent).
-    """
+   
     if not ids:
         return []
 

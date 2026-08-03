@@ -1,15 +1,3 @@
-"""
-agents/alert_agent.py
-=======================
-Agent spécialisé : décide si les résultats produits par les AUTRES agents
-(RiskAgent, MarketAgent...) justifient la création d'une alerte.
-
-Différence importante avec RiskAgent/MarketAgent : cet agent ne reçoit
-PAS le texte brut de l'article, mais les résultats structurés déjà
-produits par les autres agents pour cet article. C'est l'orchestrateur
-qui fait ce lien (article -> agents d'analyse -> AlertAgent).
-"""
-
 import json
 from agents.base_agent import BaseAgent
 

@@ -1,28 +1,4 @@
-"""
-orchestrator.py
-================
-MASOrchestrator : le chef d'orchestre du système multi-agents.
 
-Modèle suivi (validé par l'encadrant) : chaque article est CATÉGORISÉ
-puis affecté à UN SEUL agent correspondant (MarketAgent, RiskAgent ou
-SupplierAgent) — pas aux trois. Le résultat de cet agent unique est
-ensuite transmis à AlertAgent pour décider d'une alerte.
-
-Rôle de l'orchestrateur :
-- récupère les articles à traiter (via db.py)
-- télécharge et nettoie le contenu de chaque article
-- identifie la catégorie de l'article (risque / marché / fournisseur)
-- envoie l'article à l'agent correspondant à cette catégorie
-- transmet le résultat de cet agent à AlertAgent
-- isole les erreurs : un article ou un agent en échec ne bloque jamais
-  le reste du cycle
-- construit le document JSON final du cycle
-
-Ce que l'orchestrateur NE fait PAS : il n'analyse jamais lui-même
-le contenu d'un article (le marché, le risque ou le fournisseur).
-La catégorisation est une décision de ROUTAGE, pas une analyse
-métier — c'est un simple aiguillage vers le bon spécialiste.
-"""
 
 import re
 import requests
@@ -37,12 +13,7 @@ from agents.alert_agent import AlertAgent
 
 
 def _telecharger_et_nettoyer(url: str, longueur_max: int = 6000) -> str:
-    """
-    Télécharge une page web et en extrait le texte principal,
-    en supprimant scripts, styles et balises HTML.
-
-    Retourne une chaîne vide en cas d'échec (l'appelant doit vérifier).
-    """
+   
     if not url or not url.startswith(("http://", "https://")):
         return ""
 
@@ -74,12 +45,8 @@ class MASOrchestrator:
     CATEGORIES_VALIDES = {"risque", "marche", "fournisseur"}
 
     def __init__(self):
-        # Un agent générique, léger, dédié UNIQUEMENT au routage (catégorisation).
-        # Ce n'est pas un agent d'analyse métier : il ne fait que déterminer
-        # vers quel spécialiste envoyer l'article.
+      
         self._categoriseur = BaseAgent()
-
-        # Les agents spécialisés, un seul étant appelé par article selon la catégorie
         self._agents_par_categorie = {
             "risque": RiskAgent(),
             "marche": MarketAgent(),
@@ -88,12 +55,6 @@ class MASOrchestrator:
         self.alert_agent = AlertAgent()
 
     def _identifier_categorie(self, titre: str, contenu: str) -> dict:
-        """
-        Détermine la catégorie de l'article : "risque", "marche" ou
-        "fournisseur". Ceci est un simple ROUTAGE, pas une analyse
-        métier (l'orchestrateur ne juge jamais le fond du risque, de
-        la tendance ou du fournisseur lui-même).
-        """
         prompt = f"""
         Tu dois uniquement CATÉGORISER cet article, sans l'analyser en détail.
 
@@ -114,18 +75,11 @@ class MASOrchestrator:
         return self._categoriseur.call_model(prompt)
 
     def lancer_cycle(self, depuis_date=None, limite: int = 50, ids_a_reessayer=None) -> dict:
-        """
-        Lance un cycle complet et retourne le document JSON final
-        (statistiques, résultats, alertes, erreurs).
-
-        `ids_a_reessayer` : IDs d'articles ayant échoué lors d'un cycle
-        précédent, à traiter à nouveau même s'ils sont antérieurs à
-        `depuis_date` (sinon ils seraient ignorés pour toujours).
-        """
+       
         debut = datetime.now(timezone.utc)
         articles = db.get_articles_a_traiter(depuis_date=depuis_date, limite=limite)
 
-        # Ajout des articles en échec du cycle précédent, sans doublon
+       
         if ids_a_reessayer:
             deja_presents = {a["id"] for a in articles}
             ids_manquants = [i for i in ids_a_reessayer if i not in deja_presents]
@@ -136,7 +90,7 @@ class MASOrchestrator:
         nb_erreurs = 0
         nb_analyses = 0
         derniere_date_created_at = None
-        ids_en_echec = set()  # articles ayant échoué au moins une fois dans ce cycle
+        ids_en_echec = set()  
 
         for article in articles:
             article_id = article["id"]
@@ -147,7 +101,7 @@ class MASOrchestrator:
             if derniere_date_created_at is None or created_at > derniere_date_created_at:
                 derniere_date_created_at = created_at
 
-            # --- Récupération du contenu ---
+           
             contenu = _telecharger_et_nettoyer(lien)
             if not contenu:
                 nb_erreurs += 1
@@ -164,7 +118,7 @@ class MASOrchestrator:
                 })
                 continue
 
-            # --- Catégorisation (routage vers UN SEUL agent) ---
+          
             sortie_categorie = self._identifier_categorie(titre, contenu)
             categorie = sortie_categorie.get("categorie")
 
@@ -185,7 +139,7 @@ class MASOrchestrator:
                 })
                 continue
 
-            # --- Analyse par l'agent correspondant (un seul) ---
+            
             agent_choisi = self._agents_par_categorie[categorie]
             nom_agent_choisi = type(agent_choisi).__name__
 
@@ -208,7 +162,7 @@ class MASOrchestrator:
                 nb_erreurs += 1
                 ids_en_echec.add(article_id)
 
-            # --- Décision d'alerte, basée sur le résultat de CET agent unique ---
+            
             if statut_agent == "SUCCESS":
                 sortie_alerte = self.alert_agent.evaluer(
                     article_id=article_id,

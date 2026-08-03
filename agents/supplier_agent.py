@@ -1,13 +1,3 @@
-"""
-agents/supplier_agent.py
-==========================
-Agent spécialisé : analyse les informations concernant des fournisseurs
-(mentions, incidents, changements de statut...) dans le texte d'un article.
-
-Même principe que RiskAgent/MarketAgent : reçoit un texte, retourne
-du JSON structuré, ne connaît ni la base de données, ni les autres agents.
-"""
-
 from agents.base_agent import BaseAgent
 
 
